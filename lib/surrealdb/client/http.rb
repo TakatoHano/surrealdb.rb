@@ -23,10 +23,13 @@ module Surrealdb
       def initialize(url, namespace, database, username, password)
         uri = URI.parse(url)
         @http = Net::HTTP.start(uri.host, uri.port)
-        @namespace = namespace
-        @database = database
         @username = username
         @password = password
+        @headers = {
+          "Accept": "application/json",
+          "NS": namespace,
+          "DB": database
+        }
       end
 
       # Execute a query against the SurrealDB server.
@@ -206,18 +209,10 @@ module Surrealdb
       end
 
       def request(req, body = nil)
-        req.initialize_http_header(headers)
+        req.initialize_http_header(@headers)
         req.body = body unless body.nil?
         req.basic_auth(@username, @password)
         req
-      end
-
-      def headers
-        {
-          "Accept": "application/json",
-          "NS": @namespace,
-          "DB": @database
-        }
       end
     end
   end

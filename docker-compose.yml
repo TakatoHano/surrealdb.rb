@@ -1,0 +1,28 @@
+version: '3'
+services:
+  ruby:
+    build:
+      context: .
+      args:
+        host_uid: $CUID
+        host_gid: $CGID
+        user: $CU
+        group: $CG
+    tty: true
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    environment:
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: root
+      DATABASE_HOST: surrealdb
+      DATABASE_NAMESPACE: test
+      DATABASE_DATABASE: test
+    depends_on:
+      - surrealdb
+
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    command: start --user root --pass root
+    ports:
+      - "8000:8000"

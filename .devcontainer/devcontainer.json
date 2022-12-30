@@ -1,0 +1,27 @@
+{
+  "name": "Ruby",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "ruby",
+  "initializeCommand": "bash init.sh",
+  "workspaceFolder": "/workspace",
+  "extensions": [
+    "Shopify.ruby-extensions-pack",
+    "misogi.ruby-rubocop",
+    "oderwat.indent-rainbow",
+    "aaron-bond.better-comments",
+    "dzhavat.bracket-pair-toggler"
+  ],
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "[ruby]": {
+      "editor.formatOnSave": true
+    },
+    "ruby.lint": {
+      "rubocop": {
+        "useBundler": true
+      }
+    },
+    "ruby.format": "rubocop",
+    "ruby.rubocop.configFilePath": "/workspace/.rubocop.yml"
+  }
+}

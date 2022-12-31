@@ -15,64 +15,64 @@ RSpec.describe Surrealdb::Client::Http do # rubocop:disable Metrics/BlockLength
     let(:table) { "hospital" }
     it do
       client.delete_all(table)
-      expect(client.select_all(table).length).to eq 0
+      expect(client.select_all(table).no_data?).to eq true
     end
   end
 
   context "create, select, replace and delete onece" do
     let(:table) { "hospital" }
-    let(:custom_id) { "customidhere" }
+    let(:id) { "customidhere" }
     let(:name) { "A second Hospital" }
     let(:location) { "earth" }
     let(:data) { { name:, location: } }
 
-    let(:result) { { id: "#{table}:#{custom_id}", name:, location: } }
+    let(:result) { { id:, name:, location: } }
     it "create_with_id" do
-      expect(client.create_one(table, custom_id, data)).to eq result
+      expect(client.create_one(table, id, data).data).to eq result
     end
     it "select_one" do
-      expect(client.select_one(table, custom_id)).to eq result
+      expect(client.select_one(table, id).data).to eq result
     end
 
     let(:new_name) { "A Replacement Hospital" }
     let(:new_location) { "not earth" }
     let(:new_data) { { name: new_name, location: new_location } }
-    let(:new_result) { { id: "#{table}:#{custom_id}", name: new_name, location: new_location } }
+    let(:new_result) { { id:, name: new_name, location: new_location } }
 
     it "replace_one" do
-      expect(client.replace_one(table, custom_id, new_data)).to eq new_result
+      expect(client.replace_one(table, id, new_data).data).to eq new_result
     end
 
     it "delete_one" do
-      client.delete_one(table, custom_id)
-      expect(client.select_one(table, custom_id)).to eq nil
+      client.delete_one(table, id)
+      expect(client.select_one(table, id).no_data?).to eq true
     end
   end
 
   context "upsert" do
     let(:table) { "hospital" }
-    let(:custom_id) { "customidhere" }
+    let(:id) { "customidhere" }
     let(:name) { "A second Hospital" }
     let(:location) { "earth" }
     let(:data) { { name:, location: } }
 
-    let(:result) { { id: "#{table}:#{custom_id}", name:, location: } }
+    let(:result) { { id:, name:, location: } }
     it "if the record does not exist, upsert behaves as an insert" do
-      expect(client.upsert_one(table, custom_id, data)).to eq result
+      expect(client.upsert_one(table, id, data).data).to eq result
     end
 
     let(:new_name) { "A Replacement Hospital" }
     let(:new_location) { "not earth" }
     let(:new_data) { { name: new_name, location: new_location } }
-    let(:new_result) { { id: "#{table}:#{custom_id}", name: new_name, location: new_location } }
+    let(:new_result) { { id:, name: new_name, location: new_location } }
 
     it "if the record exists, upsert behaves as update" do
-      expect(client.upsert_one(table, custom_id, new_data)).to eq new_result
+      expect(client.upsert_one(table, id, new_data).data).to eq new_result
     end
 
     it "delete_one" do
-      client.delete_one(table, custom_id)
-      expect(client.select_one(table, custom_id)).to eq nil
+      client.delete_one(table, id)
+      expect(client.select_one(table, id).no_data?).to eq true
     end
   end
 
@@ -85,18 +85,18 @@ RSpec.describe Surrealdb::Client::Http do # rubocop:disable Metrics/BlockLength
     end
 
     it "create_all" do
-      result = client.create_all(table, data)
-      expect(result[0][:name]).to eq names
-      expect(result[0][:location]).to eq locations
+      result = client.create_all(table, data).data
+      expect(result[:name]).to eq names
+      expect(result[:location]).to eq locations
     end
     it "select_all" do
-      result = client.select_all(table)
-      expect(result[0][:name]).to eq names
-      expect(result[0][:location]).to eq locations
+      result = client.select_all(table).data
+      expect(result[:name]).to eq names
+      expect(result[:location]).to eq locations
     end
     it "remove all" do
       client.delete_all(table)
-      expect(client.select_all(table).length).to eq 0
+      expect(client.select_all(table).no_data?).to eq true
     end
   end
 end

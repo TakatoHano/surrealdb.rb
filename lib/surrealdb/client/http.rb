@@ -61,7 +61,7 @@ module Surrealdb
       #   result as JSON
       def create_all(table, data)
         response = JSON.parse(@http.request(post_req("/key/#{table}", JSON.dump(data))).body, symbolize_names: true)
-        response[0][:result]
+        response(response)
       end
 
       # Create a single item in a table.
@@ -81,7 +81,7 @@ module Surrealdb
       def create_one(table, id, data)
         response = JSON.parse(@http.request(post_req("/key/#{table}/#{id}", JSON.dump(data))).body,
                               symbolize_names: true)
-        response[0][:result][0]
+        response(response)
       end
 
       # Select all items in a table.
@@ -96,7 +96,7 @@ module Surrealdb
       #   result as JSON
       def select_all(table)
         response = JSON.parse(@http.request(get_req("/key/#{table}")).body, symbolize_names: true)
-        response[0][:result]
+        response(response)
       end
 
       # Select a single item in a table.
@@ -113,7 +113,7 @@ module Surrealdb
       #   result as JSON
       def select_one(table, id)
         response = JSON.parse(@http.request(get_req("/key/#{table}/#{id}")).body, symbolize_names: true)
-        response[0][:result][0]
+        response(response)
       end
 
       # Replace a single item in a table.
@@ -136,7 +136,7 @@ module Surrealdb
       def replace_one(table, id, data)
         response = JSON.parse(@http.request(put_req("/key/#{table}/#{id}", JSON.dump(data))).body,
                               symbolize_names: true)
-        response[0][:result][0]
+        response(response)
       end
 
       # Upserts a single item in a table.
@@ -159,7 +159,7 @@ module Surrealdb
       def upsert_one(table, id, data)
         response = JSON.parse(@http.request(patch_req("/key/#{table}/#{id}", JSON.dump(data))).body,
                               symbolize_names: true)
-        response[0][:result][0]
+        response(response)
       end
 
       # Delete all items in a table.
@@ -169,8 +169,9 @@ module Surrealdb
       #   table: str
       #       The table to delete all items from.
       def delete_all(table)
-        @http.request(delete_req("/key/#{table}"))
-        nil
+        response = JSON.parse(@http.request(delete_req("/key/#{table}")).body,
+                              symbolize_names: true)
+        response(response)
       end
 
       # Delete one item in a table.
@@ -182,8 +183,9 @@ module Surrealdb
       #   id: str
       #       The id of the item to delete.
       def delete_one(table, id)
-        @http.request(delete_req("/key/#{table}/#{id}"))
-        nil
+        response = JSON.parse(@http.request(delete_req("/key/#{table}/#{id}")).body,
+                              symbolize_names: true)
+        response(response)
       end
 
       # private
@@ -213,6 +215,10 @@ module Surrealdb
         req.body = body unless body.nil?
         req.basic_auth(@username, @password)
         req
+      end
+
+      def response(res)
+        Surrealdb::SurrealResponse.new(res)
       end
     end
   end

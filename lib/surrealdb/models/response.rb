@@ -8,9 +8,11 @@ module Surrealdb
   class SurrealResponse
     attr_reader :table, :data
 
-    def initialize(response)
-      @time = response[0][:time]
+    def initialize(response) # rubocop:disable Metrics/AbcSize
+      raise Surrealdb::SurrealException, response unless valid?(response)
+
       @status = response[0][:status]
+      @time = response[0][:time]
       result = response[0][:result]
       return if result.empty?
 
@@ -31,6 +33,10 @@ module Surrealdb
         rec[:id] = id
         rec
       end
+    end
+
+    def valid?(response)
+      response.instance_of?(Array)
     end
   end
 end

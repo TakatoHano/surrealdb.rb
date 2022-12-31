@@ -99,4 +99,21 @@ RSpec.describe Surrealdb::Client::Http do # rubocop:disable Metrics/BlockLength
       expect(client.select_all(table).no_data?).to eq true
     end
   end
+
+  context "Authentication failed" do
+    let(:password) { "" }
+    let(:table) { "hospital" }
+
+    let(:code) { 403 }
+    let(:details) { "Authentication failed" }
+    let(:description) do
+      "Your authentication details are invalid. Reauthenticate using valid authentication parameters."
+    end
+    it do
+      expect { client.select_all(table) }.to raise_error(
+        Surrealdb::SurrealException,
+        "#{code} #{details}: #{description}"
+      )
+    end
+  end
 end

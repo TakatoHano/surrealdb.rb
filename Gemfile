@@ -6,6 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 13.0"
+gem "websocket-eventmachine-client", "~> 1.3.0"
 
 group :development do
   gem "rspec"

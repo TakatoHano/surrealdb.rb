@@ -4,7 +4,7 @@ require "net/http"
 require "json"
 
 module Surrealdb
-  class Client
+  module Client
     # Represents a http connection to a SurrealDB server.
     #
     #     Parameters

@@ -1,4 +1,4 @@
-# Surrealdb library for Ruby (Non-Official)
+# [Surrealdb](https://github.com/surrealdb/surrealdb) library for Ruby (Non-Official)
 The non-official SurrealDB library for Ruby.
 
 ## Installation
